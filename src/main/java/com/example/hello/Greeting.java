@@ -19,6 +19,11 @@ public class Greeting {
     this.message = message;
   }
 
+  public String getSecondMessage() {
+	return "message";
+	
+  }
+
   @Override
   public String toString() {
     return "Greeting{" +

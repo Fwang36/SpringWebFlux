@@ -22,4 +22,13 @@ public class GreetingClient {
           .bodyToMono(Greeting.class)
           .map(Greeting::getMessage);
     }
+    
+    public Mono<String> getSecondMessage() {
+        return this.client.get().uri("/second-message")  // Assuming there's an endpoint like this
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .bodyToMono(Greeting.class)
+            .map(Greeting::getSecondMessage);  // This assumes Greeting class has a getSecondMessage() method that works similarly to getMessage()
+    }
+
 }
