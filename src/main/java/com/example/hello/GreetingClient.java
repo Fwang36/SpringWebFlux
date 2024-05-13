@@ -6,6 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import io.sentry.spring.jakarta.tracing.SentrySpan;
+
 @Component
 public class GreetingClient {
     private final WebClient client;
@@ -16,13 +18,15 @@ public class GreetingClient {
       this.client = builder.baseUrl("http://localhost:8080").build();
     }
   
+    @SentrySpan
     public Mono<String> getMessage() {
       return this.client.get().uri("/hello").accept(MediaType.APPLICATION_JSON)
           .retrieve()
           .bodyToMono(Greeting.class)
           .map(Greeting::getMessage);
     }
-    
+
+    @SentrySpan
     public Mono<String> getSecondMessage() {
         return this.client.get().uri("/second-message")  // Assuming there's an endpoint like this
             .accept(MediaType.APPLICATION_JSON)

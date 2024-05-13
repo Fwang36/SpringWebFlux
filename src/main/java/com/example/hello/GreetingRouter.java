@@ -7,12 +7,15 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import io.sentry.spring.jakarta.tracing.SentrySpan;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 
 @Configuration(proxyBeanMethods = false)
 public class GreetingRouter {
     @Bean
+    @SentrySpan
     public RouterFunction<ServerResponse> route(GreetingHandler greetingHandler) {
   
       return RouterFunctions
@@ -20,7 +23,8 @@ public class GreetingRouter {
         .andRoute(GET("/second-message").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::secondMessage)
         .andRoute(GET("/combined").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::combinedMessages)
         .andRoute(GET("/error").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::throwError)
-        .andRoute(GET("/external-data"), greetingHandler::fetchExternalData);
+        .andRoute(GET("/external-data"), greetingHandler::fetchExternalData)
+        .andRoute(GET("/trigger-error"), greetingHandler::triggerError);
     }
 }
 
