@@ -25,6 +25,7 @@ public class GreetingHandler {
             .flatMap(data -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(data))
             .onErrorResume(e -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).bodyValue("Error fetching external data: " + e.getMessage()));
     }
+    @SentrySpan
     public Mono<ServerResponse> hello(ServerRequest request) {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
           .body(BodyInserters.fromValue(new Greeting("Hello, Spring!")));
@@ -34,28 +35,6 @@ public class GreetingHandler {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
           .body(BodyInserters.fromValue(new Greeting("This is second message")));
       }  
-
-    public Mono<Greeting> hello2() {
-        return Mono.just(new Greeting("Hello, Spring!"));  
-    }
-
-//   @SentrySpan(description = "Second Message Span")
-    public Mono<Greeting> secondMessage2() {
-        return Mono.just(new Greeting("This is the second message"));
-    }
-
-    
-    public Mono<ServerResponse> combinedMessages(ServerRequest request) {
-        Mono<Greeting> helloMono = hello2();
-        Mono<Greeting> secondMono = secondMessage2();
-
-        
-        return Mono.zip(helloMono, secondMono, (hello, second) -> 
-            new Greeting("Combined messages: " + hello.getMessage() + " and " + second.getMessage()))
-            .flatMap(combinedGreeting -> ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(combinedGreeting)));
-    }
 
     public Mono<ServerResponse> throwError(ServerRequest request) {
         return Mono.error(new RuntimeException("Deliberate Exception Thrown"));

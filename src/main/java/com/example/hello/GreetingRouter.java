@@ -19,11 +19,15 @@ public class GreetingRouter {
     public RouterFunction<ServerResponse> route(GreetingHandler greetingHandler) {
   
       return RouterFunctions
-        .route(GET("/hello").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::hello)
+        //transaction
+        .route(GET("/hello").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::hello)  
+        //another transaction
         .andRoute(GET("/second-message").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::secondMessage)
-        .andRoute(GET("/combined").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::combinedMessages)
+        //crash
         .andRoute(GET("/error").and(accept(MediaType.APPLICATION_JSON)), greetingHandler::throwError)
+        //transaction that makes an outgoing request
         .andRoute(GET("/external-data"), greetingHandler::fetchExternalData)
+        //captureException
         .andRoute(GET("/trigger-error"), greetingHandler::triggerError);
     }
 }

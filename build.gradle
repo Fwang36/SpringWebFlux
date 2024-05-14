@@ -2,7 +2,34 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id "io.sentry.jvm.gradle" version "4.5.1"
 }
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
+def loadEnv(String path) {
+    def env = [:]
+    Files.readAllLines(Paths.get(path)).each { line ->
+        if (line && !line.startsWith('#')) {
+            def (key, value) = line.split('=', 2)
+            env[key.trim()] = value.trim()
+        }
+    }
+    return env
+}
+
+def env = loadEnv('.env')
+env.each { key, value ->
+    System.setProperty(key, value)
+}
+
+def sentryProject = System.getProperty('SENTRY_PROJECT')
+def sentryOrg = System.getProperty('SENTRY_ORG')
+def sentryAuth = System.getProperty('SENTRY_AUTH_TOKEN')
+
+
+
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -17,10 +44,22 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sentry {
+  // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+  // This enables source context, allowing you to see your source
+  // code as part of your stack traces in Sentry.
+  includeSourceContext = true
+
+  org = sentryOrg
+  projectName = sentryProject
+  authToken = sentryAuth
 }
