@@ -28,7 +28,9 @@ public class GreetingRouter {
         //transaction that makes an outgoing request
         .andRoute(GET("/external-data"), greetingHandler::fetchExternalData)
         //captureException
-        .andRoute(GET("/trigger-error"), greetingHandler::triggerError);
+        .andRoute(GET("/trigger-error"), greetingHandler::triggerError)
+        //trigger Logback to logs to console
+        .andRoute(GET("/logback"), greetingHandler::logExampleMessages);
     }
 }
 
