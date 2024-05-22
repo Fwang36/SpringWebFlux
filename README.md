@@ -12,6 +12,8 @@ Source bundles are uploaded, so the errors have source context.
 
 4. run with `java -jar build/libs/demo-0.0.1-SNAPSHOT.jar`
 
+5. server starts at localhost:8080/
+
 The routes are listed in `src/main/java/com/example/hello/GreetingRouter.java`
 
 The task is under `src/main/java/com/example/hello/ScheduledTaskComponent.java`
